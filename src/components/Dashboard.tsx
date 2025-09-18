@@ -12,7 +12,7 @@ import {
   Thermometer,
   Wind
 } from "lucide-react";
-import fieldHero from "@/assets/field-hero.jpg";
+import Field3D from "@/components/Field3D";
 
 const Dashboard = () => {
   return (
@@ -102,37 +102,17 @@ const Dashboard = () => {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Field Map */}
+          {/* 3D Field Visualization */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="w-5 h-5" />
-                Field Visualization
+                3D Field Visualization
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="relative rounded-lg overflow-hidden aspect-video bg-muted">
-                <img 
-                  src={fieldHero} 
-                  alt="Agricultural field monitoring view" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                
-                {/* Infection Zones Overlay */}
-                <div className="absolute top-4 left-4 space-y-2">
-                  <Badge className="bg-healthy/90 text-healthy-foreground">
-                    Healthy Zone A
-                  </Badge>
-                  <Badge className="bg-infected/90 text-infected-foreground">
-                    Infected Zone B - Active Treatment
-                  </Badge>
-                </div>
-
-                {/* Stand Markers */}
-                <div className="absolute top-1/3 left-1/4 w-3 h-3 bg-primary rounded-full animate-pulse shadow-lg" />
-                <div className="absolute top-1/2 right-1/3 w-3 h-3 bg-primary rounded-full animate-pulse shadow-lg" />
-                <div className="absolute bottom-1/3 left-1/2 w-3 h-3 bg-warning rounded-full shadow-lg" />
+              <div className="aspect-video w-full">
+                <Field3D />
               </div>
             </CardContent>
           </Card>
