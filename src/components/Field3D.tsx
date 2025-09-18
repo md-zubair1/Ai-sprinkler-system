@@ -161,17 +161,25 @@ const Field3D = () => {
   return (
     <div className="relative w-full h-full bg-gradient-to-b from-sky-200 to-green-100 rounded-lg overflow-hidden">
       <Canvas
-        camera={{ position: [25, 15, 25], fov: 60 }}
+        camera={{ 
+          position: [25, 15, 25], 
+          fov: window.innerWidth < 768 ? 75 : 60 
+        }}
         shadows
+        className="touch-pan-y"
+        gl={{ 
+          antialias: window.innerWidth > 768,
+          powerPreference: "high-performance"
+        }}
       >
-        {/* Lighting */}
+        {/* Lighting - Reduced for mobile performance */}
         <ambientLight intensity={0.4} />
         <directionalLight
           position={[10, 20, 5]}
           intensity={1}
-          castShadow
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
+          castShadow={window.innerWidth > 768}
+          shadow-mapSize-width={window.innerWidth > 768 ? 2048 : 1024}
+          shadow-mapSize-height={window.innerWidth > 768 ? 2048 : 1024}
           shadow-camera-far={50}
           shadow-camera-left={-25}
           shadow-camera-right={25}
@@ -184,9 +192,9 @@ const Field3D = () => {
           args={[50, 50]}
           rotation={[-Math.PI / 2, 0, 0]}
           position={[0, -0.1, 0]}
-          receiveShadow
+          receiveShadow={window.innerWidth > 768}
         >
-          <meshLambertMaterial color="#8b5a2b" />
+          <meshLambertMaterial color="hsl(var(--soil))" />
         </Plane>
 
         {/* Crop Field */}
@@ -197,59 +205,88 @@ const Field3D = () => {
           <SprinklerStandMarker key={stand.id} stand={stand} />
         ))}
 
-        {/* Controls */}
+        {/* Controls - Optimized for mobile */}
         <OrbitControls
           enablePan={true}
           enableZoom={true}
           enableRotate={true}
-          minDistance={10}
-          maxDistance={50}
+          minDistance={window.innerWidth < 768 ? 15 : 10}
+          maxDistance={window.innerWidth < 768 ? 40 : 50}
           minPolarAngle={0}
           maxPolarAngle={Math.PI / 2}
+          rotateSpeed={window.innerWidth < 768 ? 0.8 : 1}
+          zoomSpeed={window.innerWidth < 768 ? 0.8 : 1}
+          panSpeed={window.innerWidth < 768 ? 0.8 : 1}
+          enableDamping={true}
+          dampingFactor={0.05}
+          touches={{
+            ONE: THREE.TOUCH.ROTATE,
+            TWO: THREE.TOUCH.DOLLY_PAN
+          }}
         />
       </Canvas>
 
-      {/* Legend Overlay */}
-      <div className="absolute top-4 left-4 space-y-2 bg-background/80 backdrop-blur-sm p-3 rounded-lg">
-        <div className="text-sm font-medium mb-2">Field Status</div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-success rounded-sm" />
-          <span className="text-xs">Healthy Crops</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-warning rounded-sm" />
-          <span className="text-xs">Low Infection</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-destructive rounded-sm" />
-          <span className="text-xs">High Infection</span>
+      {/* Mobile-responsive legends */}
+      <div className="absolute top-2 left-2 md:top-4 md:left-4">
+        <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+          {/* Field Status Legend */}
+          <div className="bg-background/90 backdrop-blur-sm p-2 md:p-3 rounded-lg max-w-[140px] md:max-w-none">
+            <div className="text-xs md:text-sm font-medium mb-1 md:mb-2">Field Status</div>
+            <div className="space-y-1 md:space-y-2">
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="w-2 h-2 md:w-3 md:h-3 bg-healthy rounded-sm" />
+                <span className="text-[10px] md:text-xs">Healthy</span>
+              </div>
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="w-2 h-2 md:w-3 md:h-3 bg-warning rounded-sm" />
+                <span className="text-[10px] md:text-xs">Low Infection</span>
+              </div>
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="w-2 h-2 md:w-3 md:h-3 bg-destructive rounded-sm" />
+                <span className="text-[10px] md:text-xs">High Infection</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Stand Status Legend - Hidden on small mobile */}
+          <div className="hidden sm:block bg-background/90 backdrop-blur-sm p-2 md:p-3 rounded-lg max-w-[140px] md:max-w-none">
+            <div className="text-xs md:text-sm font-medium mb-1 md:mb-2">Stand Status</div>
+            <div className="space-y-1 md:space-y-2">
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="w-2 h-2 md:w-3 md:h-3 bg-success rounded-full" />
+                <span className="text-[10px] md:text-xs">Active</span>
+              </div>
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="w-2 h-2 md:w-3 md:h-3 bg-primary rounded-full" />
+                <span className="text-[10px] md:text-xs">Online</span>
+              </div>
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="w-2 h-2 md:w-3 md:h-3 bg-warning rounded-full" />
+                <span className="text-[10px] md:text-xs">Maintenance</span>
+              </div>
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="w-2 h-2 md:w-3 md:h-3 bg-destructive rounded-full" />
+                <span className="text-[10px] md:text-xs">Offline</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Stand Status Legend */}
-      <div className="absolute top-4 right-4 space-y-2 bg-background/80 backdrop-blur-sm p-3 rounded-lg">
-        <div className="text-sm font-medium mb-2">Stand Status</div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-success rounded-full" />
-          <span className="text-xs">Active Spraying</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-primary rounded-full" />
-          <span className="text-xs">Online</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-warning rounded-full" />
-          <span className="text-xs">Maintenance</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-destructive rounded-full" />
-          <span className="text-xs">Offline</span>
-        </div>
+      {/* Mobile-friendly controls help */}
+      <div className="absolute bottom-2 left-2 md:bottom-4 md:left-4 text-[10px] md:text-xs text-muted-foreground bg-background/90 backdrop-blur-sm px-2 py-1 rounded max-w-[200px] md:max-w-none">
+        <span className="hidden md:inline">Click & drag to rotate • Scroll to zoom • Right-click to pan</span>
+        <span className="md:hidden">Touch & drag to rotate • Pinch to zoom</span>
       </div>
 
-      {/* Controls Help */}
-      <div className="absolute bottom-4 left-4 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded">
-        Click & drag to rotate • Scroll to zoom • Right-click to pan
+      {/* Compact stand status for mobile */}
+      <div className="sm:hidden absolute top-2 right-2 bg-background/90 backdrop-blur-sm p-2 rounded-lg">
+        <div className="flex gap-1">
+          <div className="w-2 h-2 bg-success rounded-full" title="Active" />
+          <div className="w-2 h-2 bg-primary rounded-full" title="Online" />
+          <div className="w-2 h-2 bg-warning rounded-full" title="Maintenance" />
+          <div className="w-2 h-2 bg-destructive rounded-full" title="Offline" />
+        </div>
       </div>
     </div>
   );
