@@ -31,6 +31,30 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        healthy: {
+          DEFAULT: "hsl(var(--healthy))",
+          foreground: "hsl(var(--healthy-foreground))",
+        },
+        infected: {
+          DEFAULT: "hsl(var(--infected))",
+          foreground: "hsl(var(--infected-foreground))",
+        },
+        soil: {
+          DEFAULT: "hsl(var(--soil))",
+          foreground: "hsl(var(--soil-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
